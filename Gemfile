@@ -11,6 +11,8 @@ gem "rails", "~> 6.0.3", ">= 6.0.3.1"
 
 group :development, :test do
   gem "byebug"
+  gem "factory_bot_rails"
+  gem "rspec-rails"
   gem "rubocop-govuk"
 end
 
