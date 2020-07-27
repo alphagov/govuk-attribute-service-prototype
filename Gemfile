@@ -18,5 +18,7 @@ group :development, :test do
 end
 
 group :development do
+  gem "awesome_print"
   gem "listen", "~> 3.2"
+  gem "pry-rails"
 end
