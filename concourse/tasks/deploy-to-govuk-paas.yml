@@ -1,0 +1,30 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: governmentpaas/cf-cli
+    tag: 5b44bd954693937ddd07ee6c9e113923bc620aed
+inputs:
+  - name: git-main
+    path: src
+params:
+  CF_API: https://api.london.cloud.service.gov.uk
+  CF_USERNAME: ((paas-username))
+  CF_PASSWORD: ((paas-password))
+
+run:
+  dir: src
+  path: sh
+  args:
+    - "-c"
+    - |
+      set -eu
+      cf api "$CF_API"
+      cf auth
+      cf t -o "$CF_ORG" -s "$CF_SPACE"
+      cf v3-create-app $CF_APP_NAME || true
+      cf v3-apply-manifest -f manifest.yml
+      cf set-env $CF_APP_NAME CF_STARTUP_TIMEOUT "$CF_STARTUP_TIMEOUT"
+      cf scale -i "$APP_INSTANCES" $CF_APP_NAME
+      cf v3-zdt-push $CF_APP_NAME --wait-for-deploy-complete --no-route
+      cf map-route $CF_APP_NAME london.cloudapps.digital --hostname "$HOSTNAME"

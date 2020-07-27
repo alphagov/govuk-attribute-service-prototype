@@ -1,0 +1,7 @@
+---
+applications:
+- name: govuk-attribute-service
+  buildpack: ruby_buildpack
+  memory: 2G
+  services:
+    - govuk-attribute-service-postgres
