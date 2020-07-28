@@ -9,6 +9,7 @@ gem "composite_primary_keys", "~> 12.0.0"
 gem "pg"
 gem "puma", "~> 4.1"
 gem "rails", "~> 6.0.3", ">= 6.0.3.1"
+gem "rest-client", "~> 2.1.0"
 gem "sentry-raven", "~> 3.0"
 
 group :development, :test do
@@ -18,6 +19,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "rubocop-govuk"
   gem "simplecov"
+  gem "webmock"
 end
 
 group :development do
