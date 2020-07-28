@@ -6,15 +6,15 @@ default: &default
 
 development:
   <<: *default
-  database: accounts_development
+  database: attributes_development
   url: <%= ENV["DATABASE_URL"]%>
 
 test:
   <<: *default
-  database: accounts_test
+  database: attributes_test
   url: <%= ENV["TEST_DATABASE_URL"] %>
 
 production:
   <<: *default
-  database: accounts_production
+  database: attributes_production
   url: <%= ENV["DATABASE_URL"]%>
