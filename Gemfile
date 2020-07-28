@@ -5,6 +5,7 @@ source "https://rubygems.org"
 ruby File.read(".ruby-version").strip
 
 gem "bootsnap", ">= 1.4.2"
+gem "composite_primary_keys", "~> 12.0.0"
 gem "pg"
 gem "puma", "~> 4.1"
 gem "rails", "~> 6.0.3", ">= 6.0.3.1"
