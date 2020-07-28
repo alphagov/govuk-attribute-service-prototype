@@ -139,6 +139,10 @@ RSpec.describe "V1::Attributes", type: :request do
   end
 
   describe "PUT/PATCH" do
+    let(:new_claim_value) { "new claim value" }
+
+    let(:params) { { value: new_claim_value } }
+
     context "with a valid token" do
       before do
         stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
@@ -146,9 +150,57 @@ RSpec.describe "V1::Attributes", type: :request do
           .to_return(body: token_hash.to_json)
       end
 
-      it "returns 200" do
-        put "/v1/attributes/some-attribute", headers: headers
-        expect(response).to be_successful
+      context "if the token has permissions to write the claim" do
+        let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
+
+        context "if the claim already exists" do
+          let(:claim) do
+            FactoryBot.create(
+              :claim,
+              subject_identifier: token_hash[:true_subject_identifier],
+              claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+              claim_value: "hello world",
+            )
+          end
+
+          it "returns 200" do
+            put "/v1/attributes/#{claim.claim_identifier}", headers: headers, params: params
+            expect(response).to be_successful
+          end
+
+          it "returns the new claim value" do
+            put "/v1/attributes/#{claim.claim_identifier}", headers: headers, params: params
+            expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
+          end
+        end
+
+        context "if the claim does not already exist" do
+          it "returns 200" do
+            put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+            expect(response).to be_successful
+          end
+
+          it "returns the new claim value" do
+            put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+            expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
+          end
+        end
+      end
+
+      context "if the token has permission to read the claim" do
+        let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
+
+        it "does not grant write access" do
+          put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+          expect(response).to have_http_status(401)
+        end
+      end
+
+      context "if the token does not have permission" do
+        it "returns a 401" do
+          put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+          expect(response).to have_http_status(401)
+        end
       end
     end
   end
