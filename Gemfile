@@ -9,6 +9,7 @@ gem "composite_primary_keys", "~> 12.0.0"
 gem "pg"
 gem "puma", "~> 4.1"
 gem "rails", "~> 6.0.3", ">= 6.0.3.1"
+gem "sentry-raven", "~> 3.0"
 
 group :development, :test do
   gem "byebug"
