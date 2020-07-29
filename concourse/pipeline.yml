@@ -110,6 +110,8 @@ jobs:
           CF_STARTUP_TIMEOUT: 15 # minutes
           APP_INSTANCES: 1
           HOSTNAME: govuk-attribute-service-staging
+          ACCOUNT_MANAGER_TOKEN: ((account-manager-token-staging))
+          ACCOUNT_MANAGER_URL: https://govuk-account-manager-staging.london.cloudapps.digital
 
   - name: ping-test-staging
     serial: true
@@ -150,6 +152,8 @@ jobs:
           CF_STARTUP_TIMEOUT: 15 # minutes
           APP_INSTANCES: 1
           HOSTNAME: govuk-attribute-service
+          ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
+          ACCOUNT_MANAGER_URL: https://govuk-account-manager.london.cloudapps.digital
 
   - name: ping-test-production
     serial: true
