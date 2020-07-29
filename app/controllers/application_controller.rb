@@ -16,8 +16,8 @@ class ApplicationController < ActionController::API
     rescue RestClient::Forbidden, RestClient::NotFound, RestClient::Gone
       head 401
       return
-    rescue RestClient::RequestFailed, JSON::ParserError, URI::InvalidURIError
-      # we will want to log / fix these
+    rescue RestClient::RequestFailed, JSON::ParserError, URI::InvalidURIError => e
+      Raven.capture_exception(e)
       head 500
       return
     end
