@@ -26,6 +26,8 @@ run:
       cf v3-create-app $CF_APP_NAME || true
       cf v3-apply-manifest -f manifest.yml
       cf set-env $CF_APP_NAME CF_STARTUP_TIMEOUT "$CF_STARTUP_TIMEOUT"
+      cf set-env $CF_APP_NAME ACCOUNT_MANAGER_TOKEN "$ACCOUNT_MANAGER_TOKEN"
+      cf set-env $CF_APP_NAME ACCOUNT_MANAGER_URL "$ACCOUNT_MANAGER_URL"
       cf scale -i "$APP_INSTANCES" $CF_APP_NAME
 
       cf set-env $CF_APP_NAME SENTRY_DSN "$SENTRY_DSN"
