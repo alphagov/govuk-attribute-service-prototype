@@ -11,6 +11,7 @@ params:
   CF_API: https://api.london.cloud.service.gov.uk
   CF_USERNAME: ((paas-username))
   CF_PASSWORD: ((paas-password))
+  SENTRY_DSN: https://((sentry-dsn))
 
 run:
   dir: src
@@ -26,5 +27,9 @@ run:
       cf v3-apply-manifest -f manifest.yml
       cf set-env $CF_APP_NAME CF_STARTUP_TIMEOUT "$CF_STARTUP_TIMEOUT"
       cf scale -i "$APP_INSTANCES" $CF_APP_NAME
+
+      cf set-env $CF_APP_NAME SENTRY_DSN "$SENTRY_DSN"
+      cf set-env $CF_APP_NAME SENTRY_CURRENT_ENV "$CF_SPACE"
+
       cf v3-zdt-push $CF_APP_NAME --wait-for-deploy-complete --no-route
       cf map-route $CF_APP_NAME london.cloudapps.digital --hostname "$HOSTNAME"
