@@ -1,4 +1,3 @@
-require "permissions"
 require "rails_helper"
 
 RSpec.describe "Oidc::UserInfo", type: :request do
@@ -59,7 +58,7 @@ RSpec.describe "Oidc::UserInfo", type: :request do
 
           it "includes the claim in the response" do
             get "/oidc/user_info", headers: headers
-            expect(JSON.parse(response.body)).to include(claim.claim_identifier => claim.claim_value)
+            expect(JSON.parse(response.body)).to include(claim.claim_name.to_s => claim.claim_value)
           end
         end
 
