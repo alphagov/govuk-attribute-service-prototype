@@ -1,11 +1,11 @@
 read_scopes:
-  email_address: ["account_manager_access", "email_address_read"]
-  email_address_verified: ["account_manager_access", "email_address_read"]
+  email: ["account_manager_access", "email"]
+  email_verified: ["account_manager_access", "email"]
 
 write_scopes:
-  email_address: ["account_manager_access"]
-  email_address_verified: ["account_manager_access"]
+  email: ["account_manager_access"]
+  email_verified: ["account_manager_access"]
 
 claims:
-  email_address: "35552825-86c7-4c4a-a9b9-7851e0ff0f7c"
-  email_address_verified: "3a683bee-24a7-4ada-88af-5bfc32a40388"
+  email: "35552825-86c7-4c4a-a9b9-7851e0ff0f7c"
+  email_verified: "3a683bee-24a7-4ada-88af-5bfc32a40388"
