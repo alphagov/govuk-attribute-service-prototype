@@ -3,29 +3,38 @@ module Permissions
   TEST_READ_SCOPE = :test_scope_read
   TEST_WRITE_SCOPE = :test_scope_write
 
-  # in addition, write access implies read access
-  CLAIM_READ_SCOPES = {
-    TEST_CLAIM_IDENTIFIER => [TEST_READ_SCOPE],
-    # email address
-    "35552825-86c7-4c4a-a9b9-7851e0ff0f7c" => %i[account_manager_access email_address_read],
-    # email address is verified?
-    "3a683bee-24a7-4ada-88af-5bfc32a40388" => %i[account_manager_access email_address_read],
-  }.freeze
+  def self.claim_read_scopes
+    @claim_read_scopes ||=
+      begin
+        scopes = load_scopes_from_yaml["read_scopes"]
+        scopes.transform_values! { |vs| vs.map(&:to_sym) }
+        enable_test_scopes? ? scopes.merge(TEST_CLAIM_IDENTIFIER => [TEST_READ_SCOPE]) : scopes
+      end
+  end
 
-  CLAIM_WRITE_SCOPES = {
-    TEST_CLAIM_IDENTIFIER => [TEST_WRITE_SCOPE],
-    # email addresss
-    "35552825-86c7-4c4a-a9b9-7851e0ff0f7c" => %i[account_manager_access],
-    # email address is verified?
-    "3a683bee-24a7-4ada-88af-5bfc32a40388" => %i[account_manager_access],
-  }.freeze
+  def self.claim_write_scopes
+    @claim_write_scopes ||=
+      begin
+        scopes = load_scopes_from_yaml["write_scopes"]
+        scopes.transform_values! { |vs| vs.map(&:to_sym) }
+        enable_test_scopes? ? scopes.merge(TEST_CLAIM_IDENTIFIER => [TEST_WRITE_SCOPE]) : scopes
+      end
+  end
+
+  def self.load_scopes_from_yaml
+    @load_scopes_from_yaml ||= YAML.safe_load(File.read(Rails.root.join("config/scopes.yml")))
+  end
+
+  def self.enable_test_scopes?
+    !Rails.env.production?
+  end
 
   def self.any_of_scopes_can_read(claim, scopes)
-    any_of_scopes_can_write(claim, scopes) || any_of_scopes_can(CLAIM_READ_SCOPES, claim, scopes)
+    any_of_scopes_can_write(claim, scopes) || any_of_scopes_can(claim_read_scopes, claim, scopes)
   end
 
   def self.any_of_scopes_can_write(claim, scopes)
-    any_of_scopes_can(CLAIM_WRITE_SCOPES, claim, scopes)
+    any_of_scopes_can(claim_write_scopes, claim, scopes)
   end
 
   def self.any_of_scopes_can(permissions, claim, scopes)
