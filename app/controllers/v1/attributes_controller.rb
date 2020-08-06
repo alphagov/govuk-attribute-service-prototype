@@ -14,7 +14,7 @@ class V1::AttributesController < ApplicationController
   end
 
   def show
-    unless Permissions.any_of_scopes_can_read(claim_identifier, token_scopes)
+    unless Permissions.any_of_scopes_can_read(claim_name, token_scopes)
       head 401
       return
     end
@@ -24,7 +24,7 @@ class V1::AttributesController < ApplicationController
   end
 
   def update
-    unless Permissions.any_of_scopes_can_write(claim_identifier, token_scopes)
+    unless Permissions.any_of_scopes_can_write(claim_name, token_scopes)
       head 401
       return
     end
@@ -44,6 +44,10 @@ private
   end
 
   def claim_identifier
-    params.fetch(:id)
+    Permissions.name_to_uuid(claim_name)
+  end
+
+  def claim_name
+    params.fetch(:id).to_sym
   end
 end

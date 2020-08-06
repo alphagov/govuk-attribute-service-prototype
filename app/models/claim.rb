@@ -16,9 +16,13 @@ class Claim < ApplicationRecord
     end
   end
 
+  def claim_name
+    Permissions.uuid_to_name(claim_identifier)
+  end
+
   def to_anonymous_hash
     {
-      claim_identifier: claim_identifier,
+      claim_name: claim_name,
       claim_value: claim_value,
     }
   end

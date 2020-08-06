@@ -6,8 +6,8 @@ class Oidc::UserInfoController < ApplicationController
 
     render json: Claim
              .where(subject_identifier: subject_identifier)
-             .select { |c| Permissions.any_of_scopes_can_read(c.claim_identifier, token_scopes) }
-             .each_with_object(oidc_response) { |c, hsh| hsh[c.claim_identifier] = c.claim_value }
+             .select { |c| Permissions.any_of_scopes_can_read(c.claim_name, token_scopes) }
+             .each_with_object(oidc_response) { |c, hsh| hsh[c.claim_name] = c.claim_value }
   end
 
 private

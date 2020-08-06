@@ -42,13 +42,16 @@ RSpec.describe "V1::Attributes", type: :request do
           let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
 
           it "returns 200" do
-            get "/v1/attributes/#{claim.claim_identifier}", headers: headers
+            get "/v1/attributes/#{claim.claim_name}", headers: headers
             expect(response).to be_successful
           end
 
           it "returns the claim value" do
-            get "/v1/attributes/#{claim.claim_identifier}", headers: headers
-            expect(JSON.parse(response.body).symbolize_keys).to eq(claim.to_anonymous_hash)
+            get "/v1/attributes/#{claim.claim_name}", headers: headers
+
+            json = JSON.parse(response.body).symbolize_keys
+            expect(json[:claim_name]).to eq(claim.to_anonymous_hash[:claim_name].to_s)
+            expect(json[:claim_value]).to eq(claim.to_anonymous_hash[:claim_value])
           end
         end
 
@@ -56,15 +59,18 @@ RSpec.describe "V1::Attributes", type: :request do
           let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
 
           it "also grants read access" do
-            get "/v1/attributes/#{claim.claim_identifier}", headers: headers
+            get "/v1/attributes/#{claim.claim_name}", headers: headers
             expect(response).to be_successful
-            expect(JSON.parse(response.body).symbolize_keys).to eq(claim.to_anonymous_hash)
+
+            json = JSON.parse(response.body).symbolize_keys
+            expect(json[:claim_name]).to eq(claim.to_anonymous_hash[:claim_name].to_s)
+            expect(json[:claim_value]).to eq(claim.to_anonymous_hash[:claim_value])
           end
         end
 
         context "if the token does not have permission" do
           it "returns a 401" do
-            get "/v1/attributes/#{claim.claim_identifier}", headers: headers
+            get "/v1/attributes/#{claim.claim_name}", headers: headers
             expect(response).to have_http_status(401)
           end
         end
@@ -83,14 +89,14 @@ RSpec.describe "V1::Attributes", type: :request do
           let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
 
           it "returns 404" do
-            get "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers
+            get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
             expect(response).to have_http_status(404)
           end
         end
 
         context "if the token does not have permission" do
           it "returns a 401" do
-            get "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers
+            get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
             expect(response).to have_http_status(401)
           end
         end
@@ -163,24 +169,24 @@ RSpec.describe "V1::Attributes", type: :request do
           end
 
           it "returns 200" do
-            put "/v1/attributes/#{claim.claim_identifier}", headers: headers, params: params
+            put "/v1/attributes/#{claim.claim_name}", headers: headers, params: params
             expect(response).to be_successful
           end
 
           it "returns the new claim value" do
-            put "/v1/attributes/#{claim.claim_identifier}", headers: headers, params: params
+            put "/v1/attributes/#{claim.claim_name}", headers: headers, params: params
             expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
           end
         end
 
         context "if the claim does not already exist" do
           it "returns 200" do
-            put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+            put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
             expect(response).to be_successful
           end
 
           it "returns the new claim value" do
-            put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+            put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
             expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
           end
         end
@@ -190,14 +196,14 @@ RSpec.describe "V1::Attributes", type: :request do
         let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
 
         it "does not grant write access" do
-          put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+          put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
           expect(response).to have_http_status(401)
         end
       end
 
       context "if the token does not have permission" do
         it "returns a 401" do
-          put "/v1/attributes/#{Permissions::TEST_CLAIM_IDENTIFIER}", headers: headers, params: params
+          put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
           expect(response).to have_http_status(401)
         end
       end
