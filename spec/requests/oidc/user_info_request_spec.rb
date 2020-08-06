@@ -1,4 +1,3 @@
-require "permissions"
 require "rails_helper"
 
 RSpec.describe "Oidc::UserInfo", type: :request do

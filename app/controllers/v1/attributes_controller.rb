@@ -1,5 +1,3 @@
-require "permissions"
-
 class V1::AttributesController < ApplicationController
   before_action :authenticate_token!
 
