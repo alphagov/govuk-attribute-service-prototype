@@ -28,3 +28,5 @@
 
 # Ignore Dotenv .env file for development
 /.env
+
+/coverage
