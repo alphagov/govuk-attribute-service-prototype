@@ -9,7 +9,7 @@ module Permissions
       begin
         scopes = load_scopes_from_yaml[:read_scopes]
         scopes.transform_values! { |vs| vs.map(&:to_sym) }
-        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_READ_SCOPE]) : scopes
+        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_READ_SCOPE, :account_manager_access]) : scopes
       end
   end
 
