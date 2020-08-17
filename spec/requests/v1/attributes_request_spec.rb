@@ -144,9 +144,9 @@ RSpec.describe "V1::Attributes", type: :request do
   end
 
   describe "PUT/PATCH" do
-    let(:new_claim_value) { "new claim value" }
+    let(:new_claim_value) { { "claim_key" => "new claim value" } }
 
-    let(:params) { { value: new_claim_value } }
+    let(:params) { { value: new_claim_value.to_json } }
 
     context "with a valid token" do
       before do
