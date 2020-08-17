@@ -29,7 +29,7 @@ class V1::AttributesController < ApplicationController
       return
     end
 
-    claim = Claim.upsert!(subject_identifier: subject_identifier, claim_identifier: claim_identifier, claim_value: params.fetch(:value))
+    claim = Claim.upsert!(subject_identifier: subject_identifier, claim_identifier: claim_identifier, claim_value: JSON.parse(params.fetch(:value)))
     render json: claim.to_anonymous_hash
   end
 
