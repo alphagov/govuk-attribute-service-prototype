@@ -12,9 +12,11 @@ RSpec.describe "V1::Attributes", type: :request do
 
   let(:token_scopes) { %w[test_scope_1 test_scope_2] }
 
+  let(:true_subject_identifier) { 42 }
+
   let(:token_hash) do
     {
-      true_subject_identifier: 42,
+      true_subject_identifier: true_subject_identifier,
       pairwise_subject_identifier: "aaabbbccc",
       scopes: token_scopes,
     }
