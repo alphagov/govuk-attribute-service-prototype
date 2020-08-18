@@ -7,5 +7,6 @@ Rails.application.routes.draw do
 
   namespace :v1 do
     resources :attributes, only: %i[show update]
+    delete "/attributes/all", to: "all_attributes#destroy"
   end
 end
