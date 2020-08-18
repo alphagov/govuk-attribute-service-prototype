@@ -5,6 +5,7 @@ read_scopes:
 write_scopes:
   email: ["account_manager_access"]
   email_verified: ["account_manager_access"]
+  transition_checker_state: ["transition_checker"]
 
 claims:
   email: "35552825-86c7-4c4a-a9b9-7851e0ff0f7c"
