@@ -13,10 +13,10 @@ module Permissions
       end
   end
 
-  def self.claim_write_scopes
-    @claim_write_scopes ||=
+  def self.claim_readwrite_scopes
+    @claim_readwrite_scopes ||=
       begin
-        scopes = load_scopes_from_yaml[:write_scopes]
+        scopes = load_scopes_from_yaml[:readwrite_scopes]
         scopes.transform_values! { |vs| vs.map(&:to_sym) }
         enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_WRITE_SCOPE]) : scopes
       end
@@ -53,7 +53,7 @@ module Permissions
   end
 
   def self.any_of_scopes_can_write(claim, scopes)
-    any_of_scopes_can(claim_write_scopes, claim, scopes)
+    any_of_scopes_can(claim_readwrite_scopes, claim, scopes)
   end
 
   def self.any_of_scopes_can(permissions, claim, scopes)
