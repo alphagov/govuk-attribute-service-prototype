@@ -10,7 +10,7 @@ RSpec.describe "V1::AllAttributes", type: :request do
 
   let(:headers) { { accept: "application/json", authorization: "Bearer #{token}" } }
 
-  let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
+  let(:token_scopes) { [Permissions::DELETE_SCOPE] }
 
   let(:true_subject_identifier) { 42 }
 
@@ -85,21 +85,32 @@ RSpec.describe "V1::AllAttributes", type: :request do
       end
 
       context "with a valid token" do
-        context "with permissions to write all of the claims" do
-          before do
-            stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
-              .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
-              .to_return(body: token_hash.to_json)
+        before do
+          stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
+            .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
+            .to_return(body: token_hash.to_json)
+        end
+
+        it "returns 200" do
+          delete "/v1/attributes/all", headers: headers
+          expect(response).to be_successful
+        end
+
+        it "removes all claims belonging to that subject" do
+          delete "/v1/attributes/all", headers: headers
+          expect(Claim.where(subject_identifier: claim.subject_identifier)).not_to be_present
+        end
+
+        context "without permission to delete the claims" do
+          let(:token_scopes) { %i[some_other_scope] }
+
+          it "returns 401" do
+            delete "/v1/attributes/all", headers: headers
+            expect(response).to have_http_status(401)
           end
 
-          it "returns 200" do
-            delete "/v1/attributes/all", headers: headers
-            expect(response).to be_successful
-          end
-
-          it "removes all claims belonging to that subject" do
-            delete "/v1/attributes/all", headers: headers
-            expect(Claim.where(subject_identifier: claim.subject_identifier)).not_to be_present
+          it "does not delete attributes" do
+            expect(Claim.where(subject_identifier: claim.subject_identifier)).to be_present
           end
         end
       end

@@ -2,16 +2,13 @@ class V1::AllAttributesController < ApplicationController
   before_action :authenticate_token!
 
   def destroy
-    all_subject_attributes = Claim.where(subject_identifier: subject_identifier)
-
-    permissions = all_subject_attributes.map { |claim| Permissions.any_of_scopes_can_write(claim.claim_name, token_scopes) }
-
-    unless permissions.all?
+    unless token_scopes.include? Permissions::DELETE_SCOPE
       head 401
       return
     end
 
-    all_subject_attributes.destroy_all
+    Claim.where(subject_identifier: subject_identifier).destroy_all
+
     head 200
   end
 
