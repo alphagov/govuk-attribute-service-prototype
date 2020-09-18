@@ -10,7 +10,7 @@ gem "pg"
 gem "puma", "~> 4.3"
 gem "rails", "~> 6.0.3"
 gem "rest-client", "~> 2.1.0"
-gem "sentry-raven", "~> 3.0"
+gem "sentry-raven", "~> 3.1"
 
 group :development, :test do
   gem "byebug"
