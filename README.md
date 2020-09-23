@@ -6,6 +6,18 @@ A prototype to store personal data connected with a GOV.UK account, with consent
 
 Use [govuk-accounts-docker](https://github.com/alphagov/govuk-accounts-docker) to run this app together with the Account Manager.
 
+### Pre-commit hooks & Detect Secrets
+
+This repo uses pre-commit hooks (https://pre-commit.com/) and the plugin detect-secrets (https://github.com/Yelp/detect-secrets) to prevent developers deploying secrets.
+Developers working with this repo should ensure they have pre-commit installed on their system before they attempt to commit and push changes.
+
+The [pre-commit project page](https://pre-commit.com/) has instructions on the many ways the tool can be installed.
+If you are using Brew on Mac or linuxbrew, an easy way is to:
+
+```
+brew install pre-commit
+```
+
 ### Running the tests
 
 You don't need govuk-accounts-docker to run the tests, a local postgres database is enough:
