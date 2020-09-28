@@ -7,7 +7,7 @@ ruby File.read(".ruby-version").strip
 gem "bootsnap", ">= 1.4.2"
 gem "composite_primary_keys", "~> 12.0.0"
 gem "pg"
-gem "puma", "~> 4.3"
+gem "puma", "~> 5.0"
 gem "rails", "~> 6.0.3"
 gem "rest-client", "~> 2.1.0"
 gem "sentry-raven", "~> 3.1"
