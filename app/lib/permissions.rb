@@ -6,12 +6,17 @@ module Permissions
   TEST_READ_SCOPE = :test_scope_read
   TEST_WRITE_SCOPE = :test_scope_write
 
+  TEST_CLAIM_NAME2 = :test2
+  TEST_CLAIM_IDENTIFIER2 = "00000000-0000-0000-0000-000000000001".freeze
+  TEST_WRITE_SCOPE2 = :test_scope_write2
+
   def self.claim_read_scopes
     @claim_read_scopes ||=
       begin
         scopes = load_scopes_from_yaml[:read_scopes]
         scopes.transform_values! { |vs| vs.map(&:to_sym) }
-        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_READ_SCOPE, :account_manager_access]) : scopes
+        test_scopes = { TEST_CLAIM_NAME => [TEST_READ_SCOPE, :account_manager_access] }
+        enable_test_scopes? ? scopes.merge(test_scopes) : scopes
       end
   end
 
@@ -20,7 +25,8 @@ module Permissions
       begin
         scopes = load_scopes_from_yaml[:readwrite_scopes]
         scopes.transform_values! { |vs| vs.map(&:to_sym) }
-        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_WRITE_SCOPE]) : scopes
+        test_scopes = { TEST_CLAIM_NAME => [TEST_WRITE_SCOPE], TEST_CLAIM_NAME2 => [TEST_WRITE_SCOPE2] }
+        enable_test_scopes? ? scopes.merge(test_scopes) : scopes
       end
   end
 
@@ -28,7 +34,8 @@ module Permissions
     @name_to_uuid ||=
       begin
         claims = load_scopes_from_yaml[:claims]
-        enable_test_scopes? ? claims.merge(TEST_CLAIM_NAME => TEST_CLAIM_IDENTIFIER) : claims
+        test_claims = { TEST_CLAIM_NAME => TEST_CLAIM_IDENTIFIER, TEST_CLAIM_NAME2 => TEST_CLAIM_IDENTIFIER2 }
+        enable_test_scopes? ? claims.merge(test_claims) : claims
       end
     @name_to_uuid[name]
   end
@@ -37,7 +44,8 @@ module Permissions
     @uuid_to_name ||=
       begin
         claims = load_scopes_from_yaml[:claims].each_with_object({}) { |(n, u), hsh| hsh[u] = n }
-        enable_test_scopes? ? claims.merge(TEST_CLAIM_IDENTIFIER => TEST_CLAIM_NAME) : claims
+        test_claims = { TEST_CLAIM_IDENTIFIER => TEST_CLAIM_NAME, TEST_CLAIM_IDENTIFIER2 => TEST_CLAIM_NAME2 }
+        enable_test_scopes? ? claims.merge(test_claims) : claims
       end
     @uuid_to_name[uuid]
   end

@@ -211,4 +211,78 @@ RSpec.describe "V1::Attributes", type: :request do
       end
     end
   end
+
+  describe "POST" do
+    let(:new_attributes) do
+      {
+        Permissions::TEST_CLAIM_NAME => "new claim value 1".to_json,
+        Permissions::TEST_CLAIM_NAME2 => "new claim value 2".to_json,
+      }
+    end
+
+    let(:params) { { attributes: new_attributes.to_json } }
+
+    context "with a valid token" do
+      before do
+        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
+          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
+          .to_return(body: token_hash.to_json)
+      end
+
+      context "if the token has permissions to write the claims" do
+        let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE, Permissions::TEST_WRITE_SCOPE2] }
+
+        context "if the claims already exist" do
+          let!(:claim1) do
+            FactoryBot.create(
+              :claim,
+              subject_identifier: token_hash[:true_subject_identifier],
+              claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+              claim_value: "hello world",
+            )
+          end
+
+          let!(:claim2) do
+            FactoryBot.create(
+              :claim,
+              subject_identifier: token_hash[:true_subject_identifier],
+              claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER2,
+              claim_value: "hello world",
+            )
+          end
+
+          it "returns 200" do
+            post "/v1/attributes", headers: headers, params: params
+            expect(response).to be_successful
+          end
+
+          it "returns the new claim values" do
+            post "/v1/attributes", headers: headers, params: params
+            expect(JSON.parse(response.body)).to eq(new_attributes.map { |k, v| { "claim_name" => k.to_s, "claim_value" => JSON.parse(v) } })
+          end
+        end
+
+        context "if the claim does not already exist" do
+          it "returns 200" do
+            post "/v1/attributes", headers: headers, params: params
+            expect(response).to be_successful
+          end
+
+          it "returns the new claim values" do
+            post "/v1/attributes", headers: headers, params: params
+            expect(JSON.parse(response.body)).to eq(new_attributes.map { |k, v| { "claim_name" => k.to_s, "claim_value" => JSON.parse(v) } })
+          end
+        end
+      end
+
+      context "if the token does not have permission to write each claim" do
+        let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
+
+        it "returns a 401" do
+          post "/v1/attributes", headers: headers, params: params
+          expect(response).to have_http_status(401)
+        end
+      end
+    end
+  end
 end
