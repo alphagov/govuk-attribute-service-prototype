@@ -1,6 +1,7 @@
 read_scopes:
   email: ["account_manager_access", "email"]
   email_verified: ["account_manager_access", "email"]
+  transition_checker_state: ["account_manager_access"]
 
 readwrite_scopes:
   email: ["account_manager_access"]
