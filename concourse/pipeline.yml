@@ -122,7 +122,7 @@ jobs:
         file: git-main/concourse/tasks/ping-smoke-test.yml
         timeout: 5m
         params:
-          URL: 'https://govuk-attribute-service-staging.london.cloudapps.digital/ping'
+          URL: 'https://attributes.account.staging.publishing.service.gov.uk/ping'
           MESSAGE: "Checks that the application deployed to staging is not serving HTTP error codes. If this fails, you should investigate immediately."
         on_failure:
           put: govuk-slack
@@ -163,7 +163,7 @@ jobs:
         file: git-main/concourse/tasks/ping-smoke-test.yml
         timeout: 5m
         params:
-          URL: 'https://govuk-attribute-service.london.cloudapps.digital/ping'
+          URL: 'https://attributes.account.publishing.service.gov.uk/ping'
           MESSAGE: "Checks that the application deployed to production is not serving HTTP error codes. If this fails, you should investigate immediately."
         on_failure:
           put: govuk-slack
