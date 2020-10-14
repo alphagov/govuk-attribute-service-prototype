@@ -14,6 +14,7 @@ gem "sentry-raven", "~> 3.1"
 
 group :development, :test do
   gem "byebug"
+  gem "climate_control"
   gem "dotenv-rails"
   gem "factory_bot_rails"
   gem "rspec-rails"
