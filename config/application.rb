@@ -37,5 +37,8 @@ module GovukAttributeServicePrototype
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # GOV.UK convention is to use lib over app/lib
+    config.autoload_paths << "lib"
   end
 end

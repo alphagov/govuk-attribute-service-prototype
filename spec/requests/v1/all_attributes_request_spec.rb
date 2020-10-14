@@ -1,9 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "V1::AllAttributes", type: :request do
-  before do
-    ENV["ACCOUNT_MANAGER_URL"] = "https://account-manager"
-    ENV["ACCOUNT_MANAGER_TOKEN"] = "account-manager-token"
+  around do |example|
+    ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
+      example.run
+    end
   end
 
   let(:token) { "123456" }
