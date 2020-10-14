@@ -27,11 +27,11 @@ run:
       cf apply-manifest -f manifest.yml
       cf set-env $CF_APP_NAME CF_STARTUP_TIMEOUT "$CF_STARTUP_TIMEOUT"
       cf set-env $CF_APP_NAME ACCOUNT_MANAGER_TOKEN "$ACCOUNT_MANAGER_TOKEN"
-      cf set-env $CF_APP_NAME ACCOUNT_MANAGER_URL "$ACCOUNT_MANAGER_URL"
+      cf set-env $CF_APP_NAME ACCOUNT_MANAGER_URL "www.${CDN_DOMAIN}"
       cf scale -i "$APP_INSTANCES" $CF_APP_NAME
 
       cf set-env $CF_APP_NAME SENTRY_DSN "$SENTRY_DSN"
       cf set-env $CF_APP_NAME SENTRY_CURRENT_ENV "$CF_SPACE"
 
       cf push $CF_APP_NAME --strategy rolling
-      cf map-route $CF_APP_NAME london.cloudapps.digital --hostname "$HOSTNAME"
+      cf map-route $CF_APP_NAME "$CDN_DOMAIN" --hostname attributes
