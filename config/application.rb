@@ -40,5 +40,8 @@ module GovukAttributeServicePrototype
 
     # GOV.UK convention is to use lib over app/lib
     config.autoload_paths << "lib"
+
+    # GOV.UK convention is to use London time (but not for ActiveRecord)
+    config.time_zone = "London"
   end
 end
