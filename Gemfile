@@ -4,13 +4,13 @@ source "https://rubygems.org"
 
 ruby File.read(".ruby-version").strip
 
-gem "bootsnap", ">= 1.4.2"
-gem "composite_primary_keys", "~> 12.0.0"
+gem "bootsnap"
+gem "composite_primary_keys"
 gem "pg"
-gem "puma", "~> 5.0"
-gem "rails", "~> 6.0.3"
-gem "rest-client", "~> 2.1.0"
-gem "sentry-raven", "~> 3.1"
+gem "puma"
+gem "rails", "6.0.3.4"
+gem "rest-client"
+gem "sentry-raven"
 
 group :development, :test do
   gem "byebug"
@@ -25,6 +25,6 @@ end
 
 group :development do
   gem "awesome_print"
-  gem "listen", "~> 3.2"
+  gem "listen"
   gem "pry-rails"
 end
