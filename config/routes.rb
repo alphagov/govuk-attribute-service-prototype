@@ -9,4 +9,6 @@ Rails.application.routes.draw do
     resources :attributes, only: %i[show update]
     delete "/attributes/all", to: "all_attributes#destroy"
   end
+
+  get "/healthcheck", to: "healthcheck#show"
 end
