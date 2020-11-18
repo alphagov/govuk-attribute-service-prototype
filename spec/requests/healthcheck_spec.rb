@@ -1,4 +1,4 @@
-RSpec.describe "/healthcheck", type: :request do
+RSpec.describe "/healthcheck" do
   it "returns ok" do
     get healthcheck_path
 
