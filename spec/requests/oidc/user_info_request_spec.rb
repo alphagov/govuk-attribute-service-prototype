@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/oidc/user_info" do
   around do |example|
     ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
