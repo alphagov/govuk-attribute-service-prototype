@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe "V1::Attributes", type: :request do
+RSpec.describe "/v1/attributes/:id" do
   around do |example|
     ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
       example.run

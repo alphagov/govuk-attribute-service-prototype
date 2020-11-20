@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe "Ping", type: :request do
+RSpec.describe "/ping" do
   describe "GET" do
     it "returns a 200" do
       get "/ping"
