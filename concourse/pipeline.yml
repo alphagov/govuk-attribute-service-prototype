@@ -183,7 +183,7 @@ jobs:
           CF_APP_NAME: govuk-attribute-service
           CF_SPACE: production
           CF_STARTUP_TIMEOUT: 15 # minutes
-          APP_INSTANCES: 6
+          APP_INSTANCES: 20
           CDN_DOMAIN: account.publishing.service.gov.uk
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
         on_failure:
