@@ -17,19 +17,14 @@ namespace :report do
 
     desc "Report on criteria usage"
     task criteria: [:environment] do
-      report = Report::TransitionChecker.report(
+      report = Report::TransitionChecker.new(
         user_id_pepper: Rails.application.secrets.reporting_user_id_pepper,
       )
 
-      return if report[:answer_sets].empty?
+      return if report.report[:answer_sets].empty?
 
       CSV($stdout, write_headers: true, headers: %i[user_id timestamp] + report[:criteria_keys]) do |csv|
-        report[:answer_sets].each do |answer_set|
-          row = {
-            user_id: answer_set[:user_id],
-            timestamp: answer_set[:timestamp],
-          }.merge(report[:criteria_keys].index_with { |key| answer_set[:criteria].include? key })
-
+        report.as_rows.each do |row|
           csv << row
         end
       end

@@ -9,23 +9,35 @@ module Report
     end
 
     def report
-      criteria_keys = {}
+      @report ||=
+        begin
+          criteria_keys = {}
 
-      answer_sets = claims.map do |claim|
-        claim_criteria = claim.claim_value["criteria_keys"].map(&:to_sym)
-        claim_criteria.each { |key| criteria_keys[key] = 1 }
+          answer_sets = claims.map do |claim|
+            claim_criteria = claim.claim_value["criteria_keys"].map { |k| k.gsub("-", "_").to_sym }
+            claim_criteria.each { |key| criteria_keys[key] = 1 }
 
+            {
+              user_id: hashed_id(claim.subject_identifier),
+              timestamp: Time.zone.at(claim.claim_value["timestamp"]),
+              criteria: claim_criteria,
+            }
+          end
+
+          {
+            criteria_keys: criteria_keys.keys,
+            answer_sets: answer_sets,
+          }
+        end
+    end
+
+    def as_rows
+      report[:answer_sets].map do |answer_set|
         {
-          user_id: hashed_id(claim.subject_identifier),
-          timestamp: Time.zone.at(claim.claim_value["timestamp"]),
-          criteria: claim_criteria,
-        }
+          user_id: answer_set[:user_id],
+          timestamp: answer_set[:timestamp],
+        }.merge(report[:criteria_keys].index_with { |key| answer_set[:criteria].include? key })
       end
-
-      {
-        criteria_keys: criteria_keys.keys,
-        answer_sets: answer_sets,
-      }
     end
 
   protected
