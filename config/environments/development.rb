@@ -25,6 +25,14 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  Sidekiq.configure_server do |config|
+    config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  end
+
+  Sidekiq.configure_client do |config|
+    config.redis = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  end
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 

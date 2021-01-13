@@ -11,6 +11,7 @@ gem "puma"
 gem "rails", "6.0.3.4"
 gem "rest-client"
 gem "sentry-raven"
+gem "sidekiq"
 
 group :development, :test do
   gem "byebug"
