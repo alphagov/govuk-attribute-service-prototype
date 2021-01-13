@@ -132,6 +132,7 @@ jobs:
           CF_SPACE: staging
           CF_STARTUP_TIMEOUT: 15 # minutes
           APP_INSTANCES: 1
+          WORKER_INSTANCES: 1
           CDN_DOMAIN: account.staging.publishing.service.gov.uk
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-staging))
         on_failure:
@@ -184,6 +185,7 @@ jobs:
           CF_SPACE: production
           CF_STARTUP_TIMEOUT: 15 # minutes
           APP_INSTANCES: 20
+          WORKER_INSTANCES: 1
           CDN_DOMAIN: account.publishing.service.gov.uk
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
         on_failure:

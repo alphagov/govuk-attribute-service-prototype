@@ -35,3 +35,5 @@ run:
 
       cf push $CF_APP_NAME --strategy rolling
       cf map-route $CF_APP_NAME "$CDN_DOMAIN" --hostname attributes
+
+      cf scale --process worker -i "$WORKER_INSTANCES" $CF_APP_NAME
