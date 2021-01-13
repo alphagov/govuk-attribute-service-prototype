@@ -5,4 +5,5 @@ applications:
   memory: 2G
   services:
     - govuk-attribute-service-postgres
+    - govuk-attribute-service-redis
     - splunk-ssl-drain
