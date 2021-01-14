@@ -9,9 +9,13 @@ inputs:
     path: src
 params:
   CF_API: https://api.london.cloud.service.gov.uk
-  CF_USERNAME: ((paas-username))
+  CF_APP_NAME: govuk-attribute-service
+  CF_ORG: govuk-accounts
   CF_PASSWORD: ((paas-password))
+  CF_STARTUP_TIMEOUT: 15 # minutes
+  CF_USERNAME: ((paas-username))
   SENTRY_DSN: https://((sentry-dsn))
+  WORKER_INSTANCES: 1
 
 run:
   dir: src
