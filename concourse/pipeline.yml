@@ -178,6 +178,7 @@ jobs:
         params:
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
           APP_INSTANCES: 20
+          BIGQUERY_CREDENTIALS: ((bigquery-credentials-production))
           CDN_DOMAIN: account.publishing.service.gov.uk
           CF_SPACE: production
         on_failure:
