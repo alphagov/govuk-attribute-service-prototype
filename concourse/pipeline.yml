@@ -127,14 +127,10 @@ jobs:
       - task: deploy-to-paas
         file: git-main/concourse/tasks/deploy-to-govuk-paas.yml
         params:
-          CF_ORG: govuk-accounts
-          CF_APP_NAME: govuk-attribute-service
-          CF_SPACE: staging
-          CF_STARTUP_TIMEOUT: 15 # minutes
-          APP_INSTANCES: 1
-          WORKER_INSTANCES: 1
-          CDN_DOMAIN: account.staging.publishing.service.gov.uk
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-staging))
+          APP_INSTANCES: 1
+          CDN_DOMAIN: account.staging.publishing.service.gov.uk
+          CF_SPACE: staging
         on_failure:
           put: govuk-slack
           params:
@@ -180,14 +176,10 @@ jobs:
       - task: deploy-to-paas
         file: git-main/concourse/tasks/deploy-to-govuk-paas.yml
         params:
-          CF_ORG: govuk-accounts
-          CF_APP_NAME: govuk-attribute-service
-          CF_SPACE: production
-          CF_STARTUP_TIMEOUT: 15 # minutes
-          APP_INSTANCES: 20
-          WORKER_INSTANCES: 1
-          CDN_DOMAIN: account.publishing.service.gov.uk
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
+          APP_INSTANCES: 20
+          CDN_DOMAIN: account.publishing.service.gov.uk
+          CF_SPACE: production
         on_failure:
           put: govuk-slack
           params:
