@@ -6,6 +6,7 @@ ruby File.read(".ruby-version").strip
 
 gem "bootsnap"
 gem "composite_primary_keys"
+gem "google-cloud-bigquery"
 gem "pg"
 gem "puma"
 gem "rails", "6.0.3.4"

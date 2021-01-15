@@ -1,3 +1,5 @@
+require "csv"
+
 namespace :report do
   namespace :transition_checker do
     desc "Check how many users have a criteria key"
@@ -10,6 +12,21 @@ namespace :report do
         matching = matching_claims.count
 
         puts "#{args[:key]}: #{matching} / #{total} (#{(matching.fdiv(total) * 100).round(2)}%)"
+      end
+    end
+
+    desc "Report on criteria usage"
+    task criteria: [:environment] do
+      report = Report::TransitionChecker.new(
+        user_id_pepper: Rails.application.secrets.reporting_user_id_pepper,
+      )
+
+      return if report.report[:answer_sets].empty?
+
+      CSV($stdout, write_headers: true, headers: %i[user_id timestamp] + report[:criteria_keys]) do |csv|
+        report.as_rows.each do |row|
+          csv << row
+        end
       end
     end
   end
