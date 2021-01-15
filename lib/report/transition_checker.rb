@@ -1,42 +1,17 @@
 module Report
   class TransitionChecker
-    def self.report(options)
-      new(options).report
-    end
-
     def initialize(user_id_pepper:)
       @user_id_pepper = user_id_pepper
     end
 
-    def report
-      @report ||=
-        begin
-          criteria_keys = {}
-
-          answer_sets = claims.map do |claim|
-            claim_criteria = claim.claim_value["criteria_keys"].map { |k| k.gsub("-", "_").to_sym }
-            claim_criteria.each { |key| criteria_keys[key] = 1 }
-
-            {
-              user_id: hashed_id(claim.subject_identifier),
-              timestamp: Time.zone.at(claim.claim_value["timestamp"]),
-              criteria: claim_criteria,
-            }
-          end
-
-          {
-            criteria_keys: criteria_keys.keys,
-            answer_sets: answer_sets,
-          }
-        end
+    def all
+      all_claims.map { |claim| claim_to_row(claim) }
     end
 
-    def as_rows
-      report[:answer_sets].map do |answer_set|
-        {
-          user_id: answer_set[:user_id],
-          timestamp: answer_set[:timestamp],
-        }.merge(report[:criteria_keys].index_with { |key| answer_set[:criteria].include? key })
+    def in_batches(batch_size: 200)
+      all_claims.find_in_batches(batch_size: batch_size) do |batch|
+        rows = batch.map { |claim| claim_to_row(claim) }
+        yield rows
       end
     end
 
@@ -44,7 +19,16 @@ module Report
 
     attr_reader :user_id_pepper
 
-    def claims
+    def claim_to_row(claim)
+      criteria = claim.claim_value["criteria_keys"].map { |k| k.gsub("-", "_").to_sym }
+
+      {
+        user_id: hashed_id(claim.subject_identifier),
+        timestamp: Time.zone.at(claim.claim_value["timestamp"]),
+      }.merge(criteria.index_with { |_key| true })
+    end
+
+    def all_claims
       Claim.where(claim_identifier: Permissions.name_to_uuid(:transition_checker_state))
     end
 
