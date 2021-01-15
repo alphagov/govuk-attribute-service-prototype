@@ -3,6 +3,9 @@
 require "google/cloud/bigquery"
 
 class BigqueryReportExportJob < ApplicationJob
+  class DeleteError < StandardError; end
+  class InsertError < StandardError; end
+
   DATASET_NAME = "daily"
   TABLE_NAME = "transition_checker"
 
@@ -19,7 +22,9 @@ class BigqueryReportExportJob < ApplicationJob
 
     delete_job = dataset.query_job "DELETE FROM #{TABLE_NAME} WHERE 1 = 1"
     delete_job.wait_until_done!
+    raise DeleteError, delete_job.error.dig("message") if delete_job.failed?
 
-    table.insert report
+    insert_response = table.insert report
+    raise InsertError, "errors: #{insert_response.error_count}" unless insert_response.success?
   end
 end
