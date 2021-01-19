@@ -24,4 +24,12 @@ class ApplicationController < ActionController::API
 
     head 401 unless @token
   end
+
+  def can_read?(claim_name)
+    !@token.nil? && Permissions.any_of_scopes_can_read(claim_name, @token[:scopes])
+  end
+
+  def can_write?(claim_name)
+    !@token.nil? && Permissions.any_of_scopes_can_write(claim_name, @token[:scopes])
+  end
 end
