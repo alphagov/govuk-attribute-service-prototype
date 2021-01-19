@@ -52,7 +52,12 @@ RSpec.describe "/oidc/user_info" do
           )
         end
 
-        context "which the token has access to" do
+        it "doesn't include the claim in the response" do
+          get "/oidc/user_info", headers: headers
+          expect(response.body).to_not include(claim.claim_identifier)
+        end
+
+        context "the token has access to the claim" do
           let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
 
           it "includes the claim in the response" do
@@ -60,13 +65,45 @@ RSpec.describe "/oidc/user_info" do
             expect(JSON.parse(response.body)).to include(claim.claim_name.to_s => claim.claim_value)
           end
         end
+      end
+    end
 
-        context "which the token does not have access to" do
-          it "doesn't include the claim in the response" do
-            get "/oidc/user_info", headers: headers
-            expect(response.body).to_not include(claim.claim_identifier)
-          end
-        end
+    context "with an invalid token" do
+      before do
+        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
+          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
+          .to_return(status: 404)
+      end
+
+      it "returns 401" do
+        get "/oidc/user_info", headers: headers
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "with an expired token" do
+      before do
+        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
+          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
+          .to_return(status: 410)
+      end
+
+      it "returns 401" do
+        get "/oidc/user_info", headers: headers
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "with the account manager down" do
+      before do
+        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
+          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
+          .to_return(status: 500)
+      end
+
+      it "returns 500" do
+        get "/oidc/user_info", headers: headers
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
   end
