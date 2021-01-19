@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_14_135809) do
+ActiveRecord::Schema.define(version: 2021_01_19_140925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 2020_08_14_135809) do
     t.string "subject_identifier", null: false
     t.uuid "claim_identifier", null: false
     t.jsonb "claim_value"
+    t.datetime "created_at", precision: 6, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "now()" }, null: false
     t.index ["claim_identifier"], name: "index_claims_on_claim_identifier"
     t.index ["subject_identifier"], name: "index_claims_on_subject_identifier"
   end
