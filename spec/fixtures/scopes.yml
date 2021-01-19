@@ -1,8 +1,11 @@
 read_scopes:
   test_claim: ["account_manager_access", "test_scope_read"]
+  test_claim_2: ["account_manager_access", "test_scope_read_2"]
 
 readwrite_scopes:
   test_claim: ["test_scope_write"]
+  test_claim_2: ["test_scope_write_2"]
 
 claims:
   test_claim: "00000000-0000-0000-0000-000000000000"
+  test_claim_2: "00000000-0000-0000-0000-000000000002"
