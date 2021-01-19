@@ -103,9 +103,9 @@ RSpec.describe "/v1/attributes/all" do
         context "without permission to delete the claims" do
           let(:token_scopes) { %i[some_other_scope] }
 
-          it "returns 401" do
+          it "returns 403" do
             delete "/v1/attributes/all", headers: headers
-            expect(response).to have_http_status(:unauthorized)
+            expect(response).to have_http_status(:forbidden)
           end
 
           it "does not delete attributes" do

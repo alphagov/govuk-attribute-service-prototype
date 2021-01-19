@@ -70,9 +70,9 @@ RSpec.describe "/v1/attributes/:id" do
         end
 
         context "if the token does not have permission" do
-          it "returns a 401" do
+          it "returns a 403" do
             get "/v1/attributes/#{claim.claim_name}", headers: headers
-            expect(response).to have_http_status(:unauthorized)
+            expect(response).to have_http_status(:forbidden)
           end
         end
       end
@@ -96,9 +96,9 @@ RSpec.describe "/v1/attributes/:id" do
         end
 
         context "if the token does not have permission" do
-          it "returns a 401" do
+          it "returns a 403" do
             get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
-            expect(response).to have_http_status(:unauthorized)
+            expect(response).to have_http_status(:forbidden)
           end
         end
       end
@@ -198,14 +198,14 @@ RSpec.describe "/v1/attributes/:id" do
 
         it "does not grant write access" do
           put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
-          expect(response).to have_http_status(:unauthorized)
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
       context "if the token does not have permission" do
-        it "returns a 401" do
+        it "returns a 403" do
           put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
-          expect(response).to have_http_status(:unauthorized)
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end

@@ -14,14 +14,14 @@ class V1::AttributesController < ApplicationController
   end
 
   def show
-    head :unauthorized and return unless can_read?(claim_name)
+    head :forbidden and return unless can_read?(claim_name)
 
     claim = Claim.find_claim(subject_identifier: subject_identifier, claim_identifier: claim_identifier)
     render json: claim.to_anonymous_hash
   end
 
   def update
-    head :unauthorized and return unless can_write?(claim_name)
+    head :forbidden and return unless can_write?(claim_name)
 
     claim = Claim.upsert!(subject_identifier: subject_identifier, claim_identifier: claim_identifier, claim_value: JSON.parse(params.fetch(:value)))
     render json: claim.to_anonymous_hash

@@ -30,9 +30,9 @@ RSpec.describe "/v1/report/bigquery" do
       )
   end
 
-  it "returns a 401" do
+  it "returns a 403" do
     post v1_report_bigquery_path, headers: headers
-    expect(response).to have_http_status(:unauthorized)
+    expect(response).to have_http_status(:forbidden)
   end
 
   context "with a valid token" do
