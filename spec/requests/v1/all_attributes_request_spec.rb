@@ -41,7 +41,7 @@ RSpec.describe "/v1/attributes/all" do
 
         it "returns 401" do
           delete "/v1/attributes/all", headers: headers
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
 
         it "does not delete attributes" do
@@ -58,7 +58,7 @@ RSpec.describe "/v1/attributes/all" do
 
         it "returns 401" do
           delete "/v1/attributes/all", headers: headers
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
 
         it "does not delete attributes" do
@@ -75,7 +75,7 @@ RSpec.describe "/v1/attributes/all" do
 
         it "returns 500" do
           delete "/v1/attributes/all", headers: headers
-          expect(response).to have_http_status(500)
+          expect(response).to have_http_status(:internal_server_error)
         end
 
         it "does not delete attributes" do
@@ -105,7 +105,7 @@ RSpec.describe "/v1/attributes/all" do
 
           it "returns 401" do
             delete "/v1/attributes/all", headers: headers
-            expect(response).to have_http_status(401)
+            expect(response).to have_http_status(:unauthorized)
           end
 
           it "does not delete attributes" do

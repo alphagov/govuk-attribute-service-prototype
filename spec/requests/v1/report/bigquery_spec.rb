@@ -32,7 +32,7 @@ RSpec.describe "/v1/report/bigquery" do
 
   it "returns a 401" do
     post v1_report_bigquery_path, headers: headers
-    expect(response).to have_http_status(401)
+    expect(response).to have_http_status(:unauthorized)
   end
 
   context "with a valid token" do
@@ -40,7 +40,7 @@ RSpec.describe "/v1/report/bigquery" do
 
     it "returns a 202" do
       post v1_report_bigquery_path, headers: headers
-      expect(response).to have_http_status(202)
+      expect(response).to have_http_status(:accepted)
     end
 
     it "enqueues a job" do

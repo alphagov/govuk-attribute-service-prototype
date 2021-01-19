@@ -72,7 +72,7 @@ RSpec.describe "/v1/attributes/:id" do
         context "if the token does not have permission" do
           it "returns a 401" do
             get "/v1/attributes/#{claim.claim_name}", headers: headers
-            expect(response).to have_http_status(401)
+            expect(response).to have_http_status(:unauthorized)
           end
         end
       end
@@ -91,14 +91,14 @@ RSpec.describe "/v1/attributes/:id" do
 
           it "returns 404" do
             get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
-            expect(response).to have_http_status(404)
+            expect(response).to have_http_status(:not_found)
           end
         end
 
         context "if the token does not have permission" do
           it "returns a 401" do
             get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
-            expect(response).to have_http_status(401)
+            expect(response).to have_http_status(:unauthorized)
           end
         end
       end
@@ -113,7 +113,7 @@ RSpec.describe "/v1/attributes/:id" do
 
       it "returns 401" do
         get "/v1/attributes/some-attribute", headers: headers
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe "/v1/attributes/:id" do
 
       it "returns 401" do
         get "/v1/attributes/some-attribute", headers: headers
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -139,7 +139,7 @@ RSpec.describe "/v1/attributes/:id" do
 
       it "returns 500" do
         get "/v1/attributes/some-attribute", headers: headers
-        expect(response).to have_http_status(500)
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
   end
@@ -198,14 +198,14 @@ RSpec.describe "/v1/attributes/:id" do
 
         it "does not grant write access" do
           put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
 
       context "if the token does not have permission" do
         it "returns a 401" do
           put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
     end
