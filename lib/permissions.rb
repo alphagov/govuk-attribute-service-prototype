@@ -1,5 +1,6 @@
 module Permissions
   DELETE_SCOPE = :account_manager_access
+  REPORTING_SCOPE = :reporting_access
 
   TEST_CLAIM_NAME = :test
   TEST_CLAIM_IDENTIFIER = "00000000-0000-0000-0000-000000000000".freeze
