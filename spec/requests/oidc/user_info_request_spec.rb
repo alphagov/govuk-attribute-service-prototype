@@ -3,7 +3,7 @@ RSpec.describe "/oidc/user_info" do
 
   let(:headers) { { accept: "application/json", authorization: "Bearer #{token}" } }
 
-  let(:token_scopes) { %w[test_scope_1 test_scope_2] }
+  let(:token_scopes) { %w[] }
 
   let(:token_hash) do
     {
@@ -37,7 +37,7 @@ RSpec.describe "/oidc/user_info" do
           FactoryBot.create(
             :claim,
             subject_identifier: token_hash[:true_subject_identifier],
-            claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+            claim_identifier: Permissions.name_to_uuid(:test_claim),
             claim_value: "hello world",
           )
         end
@@ -48,7 +48,7 @@ RSpec.describe "/oidc/user_info" do
         end
 
         context "the token has access to the claim" do
-          let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
+          let(:token_scopes) { %w[test_scope_read] }
 
           it "includes the claim in the response" do
             get "/oidc/user_info", headers: headers

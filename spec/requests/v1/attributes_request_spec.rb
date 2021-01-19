@@ -3,7 +3,7 @@ RSpec.describe "/v1/attributes/:id" do
 
   let(:headers) { { accept: "application/json", authorization: "Bearer #{token}" } }
 
-  let(:token_scopes) { %w[test_scope_1 test_scope_2] }
+  let(:token_scopes) { [] }
 
   let(:true_subject_identifier) { 42 }
 
@@ -20,10 +20,10 @@ RSpec.describe "/v1/attributes/:id" do
       before { stub_token_response token_hash }
 
       context "the token has permissions to read the claim" do
-        let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
+        let(:token_scopes) { %w[test_scope_read] }
 
         it "returns 404" do
-          get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
+          get "/v1/attributes/test_claim", headers: headers
           expect(response).to have_http_status(:not_found)
         end
 
@@ -32,7 +32,7 @@ RSpec.describe "/v1/attributes/:id" do
             FactoryBot.create(
               :claim,
               subject_identifier: token_hash[:true_subject_identifier],
-              claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+              claim_identifier: Permissions.name_to_uuid(:test_claim),
               claim_value: "hello world",
             )
           end
@@ -47,7 +47,7 @@ RSpec.describe "/v1/attributes/:id" do
           end
 
           context "the token has permission to write the claim" do
-            let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
+            let(:token_scopes) { %w[test_scope_write] }
 
             it "returns the claim value" do
               get "/v1/attributes/#{claim.claim_name}", headers: headers
@@ -63,7 +63,7 @@ RSpec.describe "/v1/attributes/:id" do
 
       context "the token does not have permission" do
         it "returns a 403" do
-          get "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers
+          get "/v1/attributes/test_claim", headers: headers
           expect(response).to have_http_status(:forbidden)
         end
       end
@@ -79,10 +79,10 @@ RSpec.describe "/v1/attributes/:id" do
       before { stub_token_response token_hash }
 
       context "the token has permissions to write the claim" do
-        let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
+        let(:token_scopes) { %w[test_scope_write] }
 
         it "creates the claim" do
-          expect { put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params }.to(change { Claim.count })
+          expect { put "/v1/attributes/test_claim", headers: headers, params: params }.to(change { Claim.count })
           expect(response).to be_successful
           expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
         end
@@ -92,7 +92,7 @@ RSpec.describe "/v1/attributes/:id" do
             FactoryBot.create(
               :claim,
               subject_identifier: token_hash[:true_subject_identifier],
-              claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+              claim_identifier: Permissions.name_to_uuid(:test_claim),
               claim_value: "hello world",
             )
           end
@@ -106,17 +106,17 @@ RSpec.describe "/v1/attributes/:id" do
       end
 
       context "the token has permission to read the claim" do
-        let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
+        let(:token_scopes) { %w[test_scope_read] }
 
         it "does not grant write access" do
-          put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
+          put "/v1/attributes/test_claim", headers: headers, params: params
           expect(response).to have_http_status(:forbidden)
         end
       end
 
       context "the token does not have permission" do
         it "returns a 403" do
-          put "/v1/attributes/#{Permissions::TEST_CLAIM_NAME}", headers: headers, params: params
+          put "/v1/attributes/test_claim", headers: headers, params: params
           expect(response).to have_http_status(:forbidden)
         end
       end

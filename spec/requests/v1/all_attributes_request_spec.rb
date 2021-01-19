@@ -19,7 +19,7 @@ RSpec.describe "/v1/attributes/all" do
     FactoryBot.create(
       :claim,
       subject_identifier: token_hash[:true_subject_identifier],
-      claim_identifier: Permissions::TEST_CLAIM_IDENTIFIER,
+      claim_identifier: Permissions.name_to_uuid(:test_claim),
       claim_value: "foo",
     )
   end
