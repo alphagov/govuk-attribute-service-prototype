@@ -12,22 +12,12 @@ RSpec.describe "/v1/report/bigquery" do
     }
   end
 
-  around do |example|
-    ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
-      example.run
-    end
-  end
-
   before do
-    stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
-      .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
-      .to_return(
-        body: {
-          true_subject_identifier: "42",
-          pairwise_subject_identifier: "aaabbbccc",
-          scopes: token_scopes,
-        }.to_json,
-      )
+    stub_token_response({
+      true_subject_identifier: "42",
+      pairwise_subject_identifier: "aaabbbccc",
+      scopes: token_scopes,
+    })
   end
 
   it "returns a 403" do

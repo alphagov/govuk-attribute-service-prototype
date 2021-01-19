@@ -1,10 +1,4 @@
 RSpec.describe "/v1/attributes/all" do
-  around do |example|
-    ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
-      example.run
-    end
-  end
-
   let(:token) { "123456" }
 
   let(:headers) { { accept: "application/json", authorization: "Bearer #{token}" } }
@@ -32,11 +26,7 @@ RSpec.describe "/v1/attributes/all" do
 
   describe "DELETE" do
     context "with a valid token" do
-      before do
-        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
-          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
-          .to_return(body: token_hash.to_json)
-      end
+      before { stub_token_response token_hash }
 
       it "removes all claims belonging to that subject" do
         expect { delete "/v1/attributes/all", headers: headers }.to(change { Claim.count })

@@ -1,10 +1,4 @@
 RSpec.describe "/v1/attributes/:id" do
-  around do |example|
-    ClimateControl.modify(ACCOUNT_MANAGER_URL: "https://account-manager", ACCOUNT_MANAGER_TOKEN: "account-manager-token") do
-      example.run
-    end
-  end
-
   let(:token) { "123456" }
 
   let(:headers) { { accept: "application/json", authorization: "Bearer #{token}" } }
@@ -23,11 +17,7 @@ RSpec.describe "/v1/attributes/:id" do
 
   describe "GET" do
     context "with a valid token" do
-      before do
-        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
-          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
-          .to_return(body: token_hash.to_json)
-      end
+      before { stub_token_response token_hash }
 
       context "the token has permissions to read the claim" do
         let(:token_scopes) { [Permissions::TEST_READ_SCOPE] }
@@ -86,11 +76,7 @@ RSpec.describe "/v1/attributes/:id" do
     let(:params) { { value: new_claim_value.to_json } }
 
     context "with a valid token" do
-      before do
-        stub_request(:get, "https://account-manager/api/v1/deanonymise-token?token=#{token}")
-          .with(headers: { accept: "application/json", authorization: "Bearer account-manager-token" })
-          .to_return(body: token_hash.to_json)
-      end
+      before { stub_token_response token_hash }
 
       context "the token has permissions to write the claim" do
         let(:token_scopes) { [Permissions::TEST_WRITE_SCOPE] }
