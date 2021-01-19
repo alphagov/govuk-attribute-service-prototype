@@ -1,8 +1,6 @@
 RSpec.describe "/v1/report/bigquery" do
   include ActiveJob::TestHelper
 
-  let(:token) { "1234" }
-
   let(:token_scopes) { [] }
 
   let(:headers) do
@@ -21,7 +19,7 @@ RSpec.describe "/v1/report/bigquery" do
   end
 
   it "returns a 403" do
-    post v1_report_bigquery_path, headers: headers
+    post v1_report_bigquery_path, headers: token_headers
     expect(response).to have_http_status(:forbidden)
   end
 
@@ -29,12 +27,12 @@ RSpec.describe "/v1/report/bigquery" do
     let(:token_scopes) { %i[reporting_access] }
 
     it "returns a 202" do
-      post v1_report_bigquery_path, headers: headers
+      post v1_report_bigquery_path, headers: token_headers
       expect(response).to have_http_status(:accepted)
     end
 
     it "enqueues a job" do
-      post v1_report_bigquery_path, headers: headers
+      post v1_report_bigquery_path, headers: token_headers
       assert_enqueued_jobs 1, only: BigqueryReportExportJob
     end
   end
