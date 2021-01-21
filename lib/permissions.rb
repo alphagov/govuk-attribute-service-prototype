@@ -1,49 +1,41 @@
 module Permissions
   DELETE_SCOPE = :account_manager_access
-
-  TEST_CLAIM_NAME = :test
-  TEST_CLAIM_IDENTIFIER = "00000000-0000-0000-0000-000000000000".freeze
-  TEST_READ_SCOPE = :test_scope_read
-  TEST_WRITE_SCOPE = :test_scope_write
+  REPORTING_SCOPE = :reporting_access
 
   def self.claim_read_scopes
-    @claim_read_scopes ||=
-      begin
-        scopes = load_scopes_from_yaml[:read_scopes]
-        scopes.transform_values! { |vs| vs.map(&:to_sym) }
-        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_READ_SCOPE, :account_manager_access]) : scopes
-      end
+    @claim_read_scopes ||= load_scopes_from_yaml[:read_scopes].tap do |scopes|
+      scopes.transform_values! { |vs| vs.map(&:to_sym) }
+    end
   end
 
   def self.claim_readwrite_scopes
-    @claim_readwrite_scopes ||=
-      begin
-        scopes = load_scopes_from_yaml[:readwrite_scopes]
-        scopes.transform_values! { |vs| vs.map(&:to_sym) }
-        enable_test_scopes? ? scopes.merge(TEST_CLAIM_NAME => [TEST_WRITE_SCOPE]) : scopes
-      end
+    @claim_readwrite_scopes ||= load_scopes_from_yaml[:readwrite_scopes].tap do |scopes|
+      scopes.transform_values! { |vs| vs.map(&:to_sym) }
+    end
   end
 
   def self.name_to_uuid(name)
-    @name_to_uuid ||=
-      begin
-        claims = load_scopes_from_yaml[:claims]
-        enable_test_scopes? ? claims.merge(TEST_CLAIM_NAME => TEST_CLAIM_IDENTIFIER) : claims
-      end
-    @name_to_uuid[name]
+    load_scopes_from_yaml[:claims][name]
   end
 
   def self.uuid_to_name(uuid)
-    @uuid_to_name ||=
-      begin
-        claims = load_scopes_from_yaml[:claims].each_with_object({}) { |(n, u), hsh| hsh[u] = n }
-        enable_test_scopes? ? claims.merge(TEST_CLAIM_IDENTIFIER => TEST_CLAIM_NAME) : claims
-      end
+    @uuid_to_name ||= load_scopes_from_yaml[:claims].each_with_object({}) { |(n, u), hsh| hsh[u] = n }
     @uuid_to_name[uuid]
   end
 
   def self.load_scopes_from_yaml
-    @load_scopes_from_yaml ||= YAML.safe_load(File.read(Rails.root.join("config/scopes.yml"))).deep_symbolize_keys
+    @load_scopes_from_yaml ||=
+      begin
+        scopes = YAML.safe_load(File.read(Rails.root.join("config/scopes.yml"))).deep_symbolize_keys
+        if enable_test_scopes?
+          test_scopes = YAML.safe_load(File.read(Rails.root.join("spec/fixtures/scopes.yml"))).deep_symbolize_keys
+          scopes.each_with_object({}) do |(k, v), h|
+            h[k] = v.merge(test_scopes.fetch(k, {}))
+          end
+        else
+          scopes
+        end
+      end
   end
 
   def self.enable_test_scopes?

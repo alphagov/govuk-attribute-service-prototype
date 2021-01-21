@@ -2,23 +2,10 @@ class V1::AllAttributesController < ApplicationController
   before_action :authenticate_token!
 
   def destroy
-    unless token_scopes.include? Permissions::DELETE_SCOPE
-      head 401
-      return
-    end
+    head :forbidden and return unless @token[:scopes].include?(Permissions::DELETE_SCOPE)
 
-    Claim.where(subject_identifier: subject_identifier).destroy_all
+    Claim.where(subject_identifier: @token[:true_subject_identifier]).destroy_all
 
-    head 200
-  end
-
-private
-
-  def subject_identifier
-    @token[:true_subject_identifier]
-  end
-
-  def token_scopes
-    @token[:scopes]
+    head :ok
   end
 end

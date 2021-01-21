@@ -14,14 +14,22 @@ class ApplicationController < ActionController::API
         scopes: token_json["scopes"].map(&:to_sym),
       }
     rescue RestClient::Forbidden, RestClient::NotFound, RestClient::Gone
-      head 401
+      head :unauthorized
       return
     rescue RestClient::RequestFailed, JSON::ParserError, URI::InvalidURIError => e
       Raven.capture_exception(e)
-      head 500
+      head :internal_server_error
       return
     end
 
-    head 401 unless @token
+    head :unauthorized unless @token
+  end
+
+  def can_read?(claim_name)
+    !@token.nil? && Permissions.any_of_scopes_can_read(claim_name, @token[:scopes])
+  end
+
+  def can_write?(claim_name)
+    !@token.nil? && Permissions.any_of_scopes_can_write(claim_name, @token[:scopes])
   end
 end
