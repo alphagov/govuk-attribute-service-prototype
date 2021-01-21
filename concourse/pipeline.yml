@@ -7,6 +7,13 @@ resource_types:
       tag: latest
       username: ((docker_hub_username))
       password: ((docker_hub_authtoken))
+
+  - name: grafana-annotation
+    type: docker-image
+    source:
+      repository: gdsre/grafana-annotation-resource
+      tag: latest
+
 resources:
   - name: git-main
     type: git
@@ -41,6 +48,17 @@ resources:
     source:
       repository: ((readonly_private_ecr_repo_url))
       tag: govuk-attribute-service-tests-image
+
+  - name: grafana-annotate-deploy
+    type: grafana-annotation
+    icon: chart-areaspline
+    source:
+      url: https://grafana-paas.cloudapps.digital
+      api_token: ((grafana-api-key))
+      tags:
+        - govuk-accounts
+        - govuk-attribute-service
+        - deploy
 
 jobs:
   - name: update-pipeline
@@ -121,6 +139,12 @@ jobs:
   - name: deploy-app-staging
     serial: true
     plan:
+      - try:
+          put: grafana-annotate-deploy
+          params:
+            tags:
+              - started
+              - staging
       - get: git-main
         trigger: true
         passed: [run-quality-checks]
@@ -130,6 +154,14 @@ jobs:
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-staging))
           CDN_DOMAIN: account.staging.publishing.service.gov.uk
           CF_SPACE: staging
+        on_success:
+          try:
+            put: grafana-annotate-deploy
+            params:
+              path: grafana-annotate-deploy
+              tags:
+                - finished
+                - staging
         on_failure:
           put: govuk-slack
           params:
@@ -169,6 +201,12 @@ jobs:
   - name: deploy-app-production
     serial: true
     plan:
+      - try:
+          put: grafana-annotate-deploy
+          params:
+            tags:
+              - started
+              - production
       - get: git-main
         trigger: true
         passed: [smoke-test-staging]
@@ -179,6 +217,14 @@ jobs:
           BIGQUERY_CREDENTIALS: ((bigquery-credentials-production))
           CDN_DOMAIN: account.publishing.service.gov.uk
           CF_SPACE: production
+        on_success:
+          try:
+            put: grafana-annotate-deploy
+            params:
+              path: grafana-annotate-deploy
+              tags:
+                - finished
+                - production
         on_failure:
           put: govuk-slack
           params:
