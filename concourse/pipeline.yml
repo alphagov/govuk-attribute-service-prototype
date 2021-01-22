@@ -151,6 +151,7 @@ jobs:
       - task: deploy-to-paas
         file: git-main/concourse/tasks/deploy-to-govuk-paas.yml
         params:
+          CF_APP_SCALING_POLICY: concourse/autoscaling/paas-scaling-policy-staging.json
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-staging))
           CDN_DOMAIN: account.staging.publishing.service.gov.uk
           CF_SPACE: staging
@@ -213,6 +214,7 @@ jobs:
       - task: deploy-to-paas
         file: git-main/concourse/tasks/deploy-to-govuk-paas.yml
         params:
+          CF_APP_SCALING_POLICY: concourse/autoscaling/paas-scaling-policy-production.json
           ACCOUNT_MANAGER_TOKEN: ((account-manager-token-production))
           BIGQUERY_CREDENTIALS: ((bigquery-credentials-production))
           CDN_DOMAIN: account.publishing.service.gov.uk
