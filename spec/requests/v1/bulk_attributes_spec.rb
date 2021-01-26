@@ -12,8 +12,8 @@ RSpec.describe "/v1/attributes" do
   let(:params) do
     {
       attributes: {
-        test_claim: "new value 1",
-        test_claim_2: "new value 2",
+        test_claim: "new value 1".to_json,
+        test_claim_2: "new value 2".to_json,
       },
     }
   end

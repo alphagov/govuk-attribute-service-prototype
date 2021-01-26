@@ -18,7 +18,7 @@ class V1::BulkAttributesController < ApplicationController
       Claim.upsert!(
         subject_identifier: @token[:true_subject_identifier],
         claim_identifier: Permissions.name_to_uuid(claim_name),
-        claim_value: value,
+        claim_value: JSON.parse(value),
       ).to_anonymous_hash
     end
 
