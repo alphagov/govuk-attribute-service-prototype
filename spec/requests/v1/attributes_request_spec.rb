@@ -56,9 +56,9 @@ RSpec.describe "/v1/attributes/:id" do
       end
 
       context "the token does not have permission" do
-        it "returns a 403" do
+        it "returns a 401" do
           get "/v1/attributes/test_claim", headers: token_headers
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
     end
@@ -104,14 +104,14 @@ RSpec.describe "/v1/attributes/:id" do
 
         it "does not grant write access" do
           put "/v1/attributes/test_claim", headers: token_headers, params: params
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
 
       context "the token does not have permission" do
-        it "returns a 403" do
+        it "returns a 401" do
           put "/v1/attributes/test_claim", headers: token_headers, params: params
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
     end

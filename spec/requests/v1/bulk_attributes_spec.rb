@@ -39,7 +39,7 @@ RSpec.describe "/v1/attributes" do
 
       it "does not grant write access" do
         expect { post "/v1/attributes", headers: token_headers, params: params }.to_not(change { Claim.count })
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
