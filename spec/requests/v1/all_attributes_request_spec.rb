@@ -31,9 +31,9 @@ RSpec.describe "/v1/attributes/all" do
       context "without permission to delete the claims" do
         let(:token_scopes) { %i[some_other_scope] }
 
-        it "returns 401" do
+        it "returns 403" do
           expect { delete "/v1/attributes/all", headers: token_headers }.to_not(change { Claim.count })
-          expect(response).to have_http_status(:unauthorized)
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end

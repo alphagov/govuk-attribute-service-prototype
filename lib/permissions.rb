@@ -1,5 +1,6 @@
 module Permissions
   DELETE_SCOPE = :account_manager_access
+  REPORTING_SCOPE = :reporting_access
 
   def self.claim_read_scopes
     @claim_read_scopes ||= load_scopes_from_yaml[:read_scopes].tap do |scopes|
