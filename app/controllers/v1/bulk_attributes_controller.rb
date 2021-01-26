@@ -8,7 +8,7 @@ class V1::BulkAttributesController < ApplicationController
   def update
     claims = params.fetch(:attributes).permit!.to_h.symbolize_keys
 
-    head :unauthorized and return unless claims.keys.all? { |claim_name| can_write?(claim_name) }
+    head 401 and return unless claims.keys.all? { |claim_name| can_write?(claim_name) }
 
     claim_hashes = claims.map do |claim_name, value|
       Claim.upsert!(
