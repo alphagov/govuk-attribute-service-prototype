@@ -6,7 +6,9 @@ class ApplicationController < ActionController::API
   def authenticate_token!
     authenticate_with_http_token do |token, _options|
       uri = "#{ENV['ACCOUNT_MANAGER_URL']}/api/v1/deanonymise-token?token=#{token}"
-      response = RestClient.get uri, { accept: :json, authorization: "Bearer #{ENV['ACCOUNT_MANAGER_TOKEN']}" }
+      response = with_retries do
+        RestClient.get uri, { accept: :json, authorization: "Bearer #{ENV['ACCOUNT_MANAGER_TOKEN']}" }
+      end
       token_json = JSON.parse(response.body)
       @token = {
         true_subject_identifier: token_json["true_subject_identifier"].to_s,
@@ -31,5 +33,14 @@ class ApplicationController < ActionController::API
 
   def can_write?(claim_name)
     !@token.nil? && Permissions.any_of_scopes_can_write(claim_name, @token[:scopes])
+  end
+
+  def with_retries(attempts = 3)
+    yield
+  rescue RestClient::Exceptions::Timeout, RestClient::ServerBrokeConnection, RestClient::BadGateway, RestClient::GatewayTimeout => e
+    attempts -= 1
+    retry unless attempts.zero?
+
+    raise e
   end
 end
