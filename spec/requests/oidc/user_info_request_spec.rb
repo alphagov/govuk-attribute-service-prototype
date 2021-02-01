@@ -80,5 +80,29 @@ RSpec.describe "/oidc/user_info" do
         expect(response).to have_http_status(:internal_server_error)
       end
     end
+
+    context "the account manager sporadically times out" do
+      let(:final_status) { 200 }
+
+      before do
+        stub_token_response nil, status: 504
+        stub_token_response nil, status: 504
+        stub_token_response token_hash, status: final_status
+      end
+
+      it "tries 3 times" do
+        get "/oidc/user_info", headers: token_headers
+        expect(response).to be_successful
+      end
+
+      context "the 3rd attempt fails" do
+        let(:final_status) { 504 }
+
+        it "returns 500" do
+          get "/oidc/user_info", headers: token_headers
+          expect(response).to have_http_status(:internal_server_error)
+        end
+      end
+    end
   end
 end
