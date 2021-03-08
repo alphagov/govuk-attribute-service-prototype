@@ -37,7 +37,7 @@ class ApplicationController < ActionController::API
 
   def with_retries(attempts = 3)
     yield
-  rescue RestClient::Exceptions::Timeout, RestClient::ServerBrokeConnection, RestClient::BadGateway, RestClient::GatewayTimeout => e
+  rescue Errno::ECONNRESET, RestClient::Exceptions::Timeout, RestClient::ServerBrokeConnection, RestClient::BadGateway, RestClient::GatewayTimeout => e
     attempts -= 1
     retry unless attempts.zero?
 
