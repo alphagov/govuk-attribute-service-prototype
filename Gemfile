@@ -7,11 +7,11 @@ ruby File.read(".ruby-version").strip
 gem "bootsnap"
 gem "composite_primary_keys"
 gem "google-cloud-bigquery"
+gem "govuk_app_config"
 gem "pg"
 gem "puma"
 gem "rails", "6.0.3.6"
 gem "rest-client"
-gem "sentry-raven"
 gem "sidekiq"
 
 group :development, :test do
