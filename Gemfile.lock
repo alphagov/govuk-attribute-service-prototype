@@ -266,7 +266,7 @@ GEM
       rubocop (>= 0.87.0)
     ruby-progressbar (1.10.1)
     ruby2_keywords (0.0.4)
-    sentry-raven (3.1.1)
+    sentry-raven (3.1.2)
       faraday (>= 1.0)
     sidekiq (6.2.0)
       connection_pool (>= 2.2.2)
