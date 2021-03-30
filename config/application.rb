@@ -19,10 +19,6 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-Raven.configure do |config|
-  config.dsn = ENV["SENTRY_DSN"]
-end
-
 module GovukAttributeServicePrototype
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.

@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
       head :unauthorized
       return
     rescue RestClient::RequestFailed, JSON::ParserError, URI::InvalidURIError => e
-      Raven.capture_exception(e)
+      GovukError.notify(e)
       head :internal_server_error
       return
     end
