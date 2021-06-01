@@ -19,7 +19,7 @@ class BigqueryReportExportJob < ApplicationJob
 
     delete_job = dataset.query_job "DELETE FROM #{TABLE_NAME} WHERE 1 = 1"
     delete_job.wait_until_done!
-    raise DeleteError, delete_job.error.dig("message") if delete_job.failed?
+    raise DeleteError, delete_job.error["message"] if delete_job.failed?
 
     Report::TransitionChecker.new(
       user_id_pepper: Rails.application.secrets.reporting_user_id_pepper,
