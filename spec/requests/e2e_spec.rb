@@ -1,5 +1,5 @@
 RSpec.describe "E2E attributes" do
-  SAMPLE_VALUES = {
+  sample_values = {
     "boolean true" => true,
     "boolean false" => false,
     "integer" => 1,
@@ -18,7 +18,7 @@ RSpec.describe "E2E attributes" do
   end
 
   context "single update endpoint" do
-    SAMPLE_VALUES.each do |test_name, claim_value|
+    sample_values.each do |test_name, claim_value|
       it "sets '#{test_name}'" do
         put "/v1/attributes/test_claim", headers: token_headers, params: { value: claim_value.to_json }
         expect(response).to be_successful
@@ -29,8 +29,8 @@ RSpec.describe "E2E attributes" do
   end
 
   context "bulk update endpoint" do
-    SAMPLE_VALUES.each do |test_name1, claim_value1|
-      SAMPLE_VALUES.each do |test_name2, claim_value2|
+    sample_values.each do |test_name1, claim_value1|
+      sample_values.each do |test_name2, claim_value2|
         it "sets '#{test_name1}' and '#{test_name2}'" do
           post "/v1/attributes", headers: token_headers, params: { attributes: { test_claim: claim_value1.to_json, test_claim_2: claim_value2.to_json } }
           expect(response).to be_successful

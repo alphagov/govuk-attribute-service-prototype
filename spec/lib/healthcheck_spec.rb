@@ -24,7 +24,7 @@ RSpec.describe Healthcheck do
       end
 
       it "sets the overall status to :critical" do
-        expect(subject.dig(:status)).to be(:critical)
+        expect(subject[:status]).to be(:critical)
       end
     end
   end
