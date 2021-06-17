@@ -27,6 +27,13 @@ class V1::AttributesController < ApplicationController
     render json: claim.to_anonymous_hash
   end
 
+  def destroy
+    head :forbidden and return unless can_write?(claim_name)
+
+    Claim.find_claim(subject_identifier: subject_identifier, claim_identifier: claim_identifier).destroy!
+    head :no_content
+  end
+
 private
 
   def subject_identifier

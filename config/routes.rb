@@ -6,9 +6,9 @@ Rails.application.routes.draw do
   end
 
   namespace :v1 do
-    resources :attributes, only: %i[show update]
-    post "/attributes", to: "bulk_attributes#update"
     delete "/attributes/all", to: "all_attributes#destroy"
+    post "/attributes", to: "bulk_attributes#update"
+    resources :attributes, only: %i[show update destroy]
 
     namespace :report do
       post "/bigquery", to: "bigquery#create"

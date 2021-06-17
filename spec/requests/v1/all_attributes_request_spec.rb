@@ -23,7 +23,7 @@ RSpec.describe "/v1/attributes/all" do
       before { stub_token_response token_hash }
 
       it "removes all claims belonging to that subject" do
-        expect { delete "/v1/attributes/all", headers: token_headers }.to(change { Claim.count })
+        expect { delete "/v1/attributes/all", headers: token_headers }.to change(Claim, :count).by(-1)
         expect(response).to be_successful
         expect(Claim.where(subject_identifier: claim.subject_identifier)).not_to be_present
       end
@@ -32,7 +32,7 @@ RSpec.describe "/v1/attributes/all" do
         let(:token_scopes) { %i[some_other_scope] }
 
         it "returns 403" do
-          expect { delete "/v1/attributes/all", headers: token_headers }.to_not(change { Claim.count })
+          expect { delete "/v1/attributes/all", headers: token_headers }.to_not change(Claim, :count)
           expect(response).to have_http_status(:forbidden)
         end
       end

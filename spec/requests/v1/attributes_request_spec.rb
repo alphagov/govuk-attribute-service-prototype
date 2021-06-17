@@ -76,7 +76,7 @@ RSpec.describe "/v1/attributes/:id" do
         let(:token_scopes) { %w[test_scope_write] }
 
         it "creates the claim" do
-          expect { put "/v1/attributes/test_claim", headers: token_headers, params: params }.to(change { Claim.count })
+          expect { put "/v1/attributes/test_claim", headers: token_headers, params: params }.to change(Claim, :count).by(1)
           expect(response).to be_successful
           expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
         end
@@ -92,7 +92,7 @@ RSpec.describe "/v1/attributes/:id" do
           end
 
           it "updates the existing claim" do
-            expect { put "/v1/attributes/#{claim.claim_name}", headers: token_headers, params: params }.to_not(change { Claim.count })
+            expect { put "/v1/attributes/#{claim.claim_name}", headers: token_headers, params: params }.to_not change(Claim, :count)
             expect(response).to be_successful
             expect(JSON.parse(response.body).symbolize_keys[:claim_value]).to eq(new_claim_value)
           end
@@ -111,6 +111,53 @@ RSpec.describe "/v1/attributes/:id" do
       context "the token does not have permission" do
         it "returns a 403" do
           put "/v1/attributes/test_claim", headers: token_headers, params: params
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+    end
+  end
+
+  describe "DELETE" do
+    context "with a valid token" do
+      before { stub_token_response token_hash }
+
+      context "the token has permissions to write the claim" do
+        let(:token_scopes) { %w[test_scope_write] }
+
+        it "returns a 404" do
+          expect { delete "/v1/attributes/test_claim", headers: token_headers }.to_not change(Claim, :count)
+          expect(response).to have_http_status(:not_found)
+        end
+
+        context "the claim exists" do
+          let!(:claim) do
+            FactoryBot.create(
+              :claim,
+              subject_identifier: token_hash[:true_subject_identifier],
+              claim_identifier: Permissions.name_to_uuid(:test_claim),
+              claim_value: "hello world",
+            )
+          end
+
+          it "deletes the existing claim" do
+            expect { delete "/v1/attributes/#{claim.claim_name}", headers: token_headers }.to change(Claim, :count).by(-1)
+            expect(response).to have_http_status(:no_content)
+          end
+        end
+      end
+
+      context "the token has permission to read the claim" do
+        let(:token_scopes) { %w[test_scope_read] }
+
+        it "does not grant delete access" do
+          delete "/v1/attributes/test_claim", headers: token_headers
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context "the token does not have permission" do
+        it "returns a 403" do
+          delete "/v1/attributes/test_claim", headers: token_headers
           expect(response).to have_http_status(:forbidden)
         end
       end
