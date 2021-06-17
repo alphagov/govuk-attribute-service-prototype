@@ -1,14 +1,17 @@
 read_scopes:
   email: ["account_manager_access", "email"]
   email_verified: ["account_manager_access", "email"]
+  has_unconfirmed_email: ["account_manager_access", "email"]
   transition_checker_state: ["account_manager_access"]
 
 readwrite_scopes:
   email: ["account_manager_access"]
   email_verified: ["account_manager_access"]
+  has_unconfirmed_email: ["account_manager_access"]
   transition_checker_state: ["transition_checker"]
 
 claims:
   email: "35552825-86c7-4c4a-a9b9-7851e0ff0f7c"
   email_verified: "3a683bee-24a7-4ada-88af-5bfc32a40388"
+  has_unconfirmed_email: "bd560cd7-32af-4290-8be1-8855f5df3bc1"
   transition_checker_state: "46be4251-abbb-4688-bb1e-4efe6284a1c5"
