@@ -10,7 +10,7 @@ gem "google-cloud-bigquery"
 gem "govuk_app_config"
 gem "pg"
 gem "puma"
-gem "rails", "6.1.4"
+gem "rails", "6.1.4.1"
 gem "rest-client"
 gem "sidekiq"
 
